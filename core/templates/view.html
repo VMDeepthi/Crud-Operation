@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.name }} - Item Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .item-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 15px 35px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .content-section {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .description-label {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .description-label::before {
+            content: '📝';
+            font-size: 1.5rem;
+        }
+
+        .description-text {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #4b5563;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2rem;
+            border-radius: 16px;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+        }
+
+        .empty-description {
+            font-style: italic;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        .actions-section {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            text-decoration: none;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px -5px rgba(107, 114, 128, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .back-btn:hover::before {
+            left: 100%;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #4b5563, #374151);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(107, 114, 128, 0.5);
+        }
+
+        .back-btn::after {
+            content: '←';
+            font-size: 1.25rem;
+            margin-right: 0.5rem;
+        }
+
+        .edit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            text-decoration: none;
+            padding: 1.25rem 2.5rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .edit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .edit-btn:hover::before {
+            left: 100%;
+        }
+
+        .edit-btn:hover {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.5);
+        }
+
+        .edit-btn::after {
+            content: '✏️';
+            font-size: 1.25rem;
+            margin-left: 0.25rem;
+        }
+
+        .metadata-section {
+            background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metadata-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .metadata-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .metadata-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 2rem;
+            }
+
+            h2 {
+                font-size: 2.25rem;
+            }
+
+            .content-section {
+                padding: 2rem;
+            }
+
+            .actions-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .back-btn,
+            .edit-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 1.5rem;
+            }
+
+            .description-text {
+                padding: 1.5rem;
+            }
+
+            .item-icon {
+                width: 60px;
+            height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation for page load */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .content-section {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .actions-section {
+            animation: fadeInUp 1s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="item-icon">👁️</div>
+            <h2>{{ item.name }}</h2>
+        </div>
+
+        <div class="content-section">
+            <div class="description-label">Description</div>
+            <div class="description-text">
+                {% if item.description %}
+                    {{ item.description }}
+                {% else %}
+                    <span class="empty-description">No description provided for this item.</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="metadata-section">
+            <div class="metadata-grid">
+                <div class="metadata-item">
+                    <div class="metadata-label">Item ID</div>
+                    <div class="metadata-value">#{{ item.id }}</div>
+                </div>
+                {% if item.created_at %}
+                <div class="metadata-item">
+                    <div class="metadata-label">Created</div>
+                    <div class="metadata-value">{{ item.created_at|date:"M d, Y" }}</div>
+                </div>
+                {% endif %}
+                {% if item.updated_at %}
+                <div class="metadata-item">
+                    <div class="metadata-label">Updated</div>
+                    <div class="metadata-value">{{ item.updated_at|date:"M d, Y" }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <a href="{% url 'update' item.id %}" class="edit-btn">Edit Item</a>
+            <a href="{% url 'home' %}" class="back-btn">Back to List</a>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                window.location.href = "{% url 'home' %}";
+            }
+        });
+
+        // Add loading state management
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fade in animation trigger
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease-out';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

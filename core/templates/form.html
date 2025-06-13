@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ form.instance.id|yesno:"Edit,Create" }} Item</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .form-container {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        form p {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        form p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.025em;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="url"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="url"]:focus,
+        input[type="password"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 15px -3px rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #667eea;
+            margin-right: 0.75rem;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-wrapper label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .errorlist {
+            list-style: none;
+            margin: 0.5rem 0 0 0;
+            padding: 0;
+        }
+
+        .errorlist li {
+            color: #dc2626;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            border-left: 4px solid #dc2626;
+            margin-top: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+        }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .save-btn:hover::before {
+            left: 100%;
+        }
+
+        .save-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.5);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(107, 114, 128, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn::before {
+            content: '←';
+            font-size: 1.25rem;
+            margin-right: 0.25rem;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #4b5563, #374151);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(107, 114, 128, 0.5);
+        }
+
+        .form-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        .required-field::after {
+            content: '*';
+            color: #dc2626;
+            margin-left: 0.25rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 2rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .save-btn,
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="number"],
+            input[type="url"],
+            input[type="password"],
+            textarea,
+            select {
+                padding: 0.875rem 1rem;
+            }
+        }
+
+        /* Django form field styling */
+        .form-row {
+            margin-bottom: 2rem;
+        }
+
+        .helptext {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Custom styling for different field types */
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #ffffff;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        input[type="datetime-local"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 15px -3px rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="form-icon">
+                {{ form.instance.id|yesno:"✏️,➕" }}
+            </div>
+            <h2>{{ form.instance.id|yesno:"Edit,Create" }} Item</h2>
+        </div>
+
+        <div class="form-container">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">
+                        {{ form.instance.id|yesno:"Update,Save" }} Item
+                    </button>
+                    <a href="{% url 'home' %}" class="back-btn">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add required field indicators
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                const input = document.querySelector('#' + label.getAttribute('for'));
+                if (input && input.hasAttribute('required')) {
+                    label.classList.add('required-field');
+                }
+            });
+
+            // Handle checkbox styling
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'checkbox-wrapper';
+                checkbox.parentNode.insertBefore(wrapper, checkbox);
+                wrapper.appendChild(checkbox);
+                if (checkbox.nextSibling && checkbox.nextSibling.nodeType === Node.TEXT_NODE) {
+                    const label = document.createElement('label');
+                    label.textContent = checkbox.nextSibling.textContent.trim();
+                    label.setAttribute('for', checkbox.id);
+                    wrapper.appendChild(label);
+                    checkbox.nextSibling.remove();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
